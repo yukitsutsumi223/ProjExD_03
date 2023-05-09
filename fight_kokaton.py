@@ -9,7 +9,7 @@ WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
 NUM_OF_BOMBS = 5  # 爆弾の数
 sum_mvb = [0, 0]
-
+mtk_t = 0
 def check_bound(area: pg.Rect, obj: pg.Rect) -> tuple[bool, bool]:
     """
     オブジェクトが画面内か画面外かを判定し，真理値タプルを返す
@@ -161,6 +161,7 @@ class Beam:
 
 
 def main():
+    global mtk_t
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     clock = pg.time.Clock()
@@ -177,19 +178,25 @@ def main():
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 beam = Beam(bird)
+            if event.type == pg.KEYDOWN and event.key == pg.K_LSHIFT:
+                if mtk_t <= 0:
+                    mtk_t = 1000
 
         tmr += 1
         screen.blit(bg_img, [0, 0])
         for bomb in bombs:
             bomb.update(screen)
-            """
-            if bird._rct.colliderect(bomb._rct):
-                # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-                bird.change_img(8, screen)
-                pg.display.update()
-                time.sleep(1)
-                return
-            """ 
+            if  mtk_t <= 0:
+                if bird._rct.colliderect(bomb._rct):
+                    # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
+                    bird.change_img(8, screen)
+                    pg.display.update()
+                    time.sleep(1)
+                    return
+        if mtk_t > 0:
+            pg.draw.circle(screen, (255, 200, 200), (bird._rct.centerx, bird._rct.centery) , 80)
+            
+            
             
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
@@ -202,6 +209,8 @@ def main():
                     del bombs[i]
                     bird.change_img(6, screen)
                     break
+        if mtk_t > 0:
+            mtk_t -= 1
         pg.display.update()
         clock.tick(1000)
 

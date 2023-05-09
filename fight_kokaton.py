@@ -178,7 +178,7 @@ def main():
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 beam = Beam(bird)
-            if event.type == pg.KEYDOWN and event.key == pg.K_LSHIFT:
+            if event.type == pg.KEYDOWN and event.key == pg.K_LSHIFT:  # 無敵時間の付与
                 if mtk_t <= 0:
                     mtk_t = 1000
 
@@ -186,14 +186,14 @@ def main():
         screen.blit(bg_img, [0, 0])
         for bomb in bombs:
             bomb.update(screen)
-            if  mtk_t <= 0:
+            if  mtk_t <= 0:  # 無敵時間中に爆弾に対する当たり判定を消す
                 if bird._rct.colliderect(bomb._rct):
                     # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
                     bird.change_img(8, screen)
                     pg.display.update()
                     time.sleep(1)
                     return
-        if mtk_t > 0:
+        if mtk_t > 0:  # 無敵時間中にこうかとんのまわりに円を描く
             pg.draw.circle(screen, (255, 200, 200), (bird._rct.centerx, bird._rct.centery) , 80)
             
             
@@ -209,7 +209,7 @@ def main():
                     del bombs[i]
                     bird.change_img(6, screen)
                     break
-        if mtk_t > 0:
+        if mtk_t > 0:   # 無敵時間のカウント
             mtk_t -= 1
         pg.display.update()
         clock.tick(1000)
